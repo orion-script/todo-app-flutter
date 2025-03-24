@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/initial_screen.dart';
 import 'screens/home_screen.dart';
-// import 'screens/login_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -10,16 +9,16 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  bool? isLoggedIn; // Stores login state
+class MyAppState extends State<MyApp> {
+  bool? isLoggedIn;
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus(); // Check login status when app starts
+    _checkLoginStatus();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -31,7 +30,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // Show loading spinner while checking login status
     if (isLoggedIn == null) {
       return const MaterialApp(
         home: Scaffold(
@@ -44,9 +42,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Flutter To-Do App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: isLoggedIn!
-          ? const HomeScreen()
-          : const AccountScreen(), // Show AccountScreen first
+      home: isLoggedIn! ? const HomeScreen() : const AccountScreen(),
     );
   }
 }

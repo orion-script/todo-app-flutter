@@ -8,10 +8,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
@@ -29,8 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _logout() async {
     AuthService authService = AuthService();
     await authService.logout();
-
-    // Navigate back to login page
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -41,11 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: const Text("To-Do App"),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: _logout, // Logout button
+            onPressed: _logout,
           ),
         ],
       ),
@@ -63,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// Dummy Home Page
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
