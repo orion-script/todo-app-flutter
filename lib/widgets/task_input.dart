@@ -6,10 +6,10 @@ class TaskInput extends StatefulWidget {
   const TaskInput({super.key, required this.onTaskAdded});
 
   @override
-  _TaskInputState createState() => _TaskInputState();
+  TaskInputState createState() => TaskInputState();
 }
 
-class _TaskInputState extends State<TaskInput> {
+class TaskInputState extends State<TaskInput> {
   final TextEditingController _controller = TextEditingController();
 
   void _submitTask() {
