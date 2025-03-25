@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'home_screen.dart';
+import "login_screen.dart";
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,6 +14,8 @@ class RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   final AuthService _authService = AuthService();
   bool _isLoading = false;
 
@@ -20,6 +23,17 @@ class RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _isLoading = true;
     });
+
+    if (_confirmPasswordController.text != _passwordController.text) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     String? errorMessage = await _authService.register(
       _nameController.text,
@@ -31,6 +45,7 @@ class RegisterScreenState extends State<RegisterScreen> {
       _isLoading = false;
     });
 
+    if (!mounted) return;
     if (errorMessage == null) {
       Navigator.pushReplacement(
         context,
@@ -90,6 +105,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                       decoration: const InputDecoration(labelText: "Password"),
                       obscureText: true,
                     ),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      decoration:
+                          const InputDecoration(labelText: "Confirm Password"),
+                      obscureText: true,
+                    ),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _isLoading ? null : _register,
@@ -123,7 +144,12 @@ class RegisterScreenState extends State<RegisterScreen> {
                           WidgetSpan(
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pop(context);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const LoginScreen()),
+                                );
                               },
                               child: const Text(
                                 "Login",
