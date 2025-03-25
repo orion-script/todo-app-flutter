@@ -31,6 +31,8 @@ class LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
 
+      if (!mounted) return;
+
       if (errorMessage == null) {
         Navigator.pushReplacement(
           context,
@@ -46,6 +48,8 @@ class LoginScreenState extends State<LoginScreen> {
         _isLoading = false;
       });
 
+      if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An unexpected error occurred: $e")),
       );
@@ -60,8 +64,8 @@ class LoginScreenState extends State<LoginScreen> {
         height: double.infinity,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/home-img.png"), // Background image
-            fit: BoxFit.cover, // Cover full screen
+            image: AssetImage("assets/home-img.png"),
+            fit: BoxFit.cover,
           ),
         ),
         child: Padding(
@@ -72,8 +76,7 @@ class LoginScreenState extends State<LoginScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color:
-                      Colors.white.withOpacity(0.8), // Semi-transparent white
+                  color: Colors.white.withOpacity(0.8),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Column(
