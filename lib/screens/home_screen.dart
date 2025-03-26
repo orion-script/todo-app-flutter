@@ -179,7 +179,7 @@ class HomePageState extends State<HomePage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF458AE5),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 60, vertical: 14),
+                          horizontal: 80, vertical: 14),
                     ),
                     child: const Text(
                       "Add Task",
