@@ -17,8 +17,12 @@ class AuthService {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final data = jsonDecode(response.body);
       final token = data['token'];
+      final user = data['user']; // Assuming the API returns user details
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
+      await prefs.setString('user', jsonEncode(user)); // Save user details
+
       return null;
     } else {
       final data = jsonDecode(response.body);
@@ -50,6 +54,7 @@ class AuthService {
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
+    await prefs.remove('user'); // Remove user details
   }
 
   // Check if user is authenticated
@@ -57,4 +62,12 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString('token') != null;
   }
+
+  // Get Stored User Details
+  // Future<Map<String, dynamic>?> getUserDetails() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userJson = prefs.getString('user');
+  //   if (userJson == null) return null;
+  //   return jsonDecode(userJson);
+  // }
 }
