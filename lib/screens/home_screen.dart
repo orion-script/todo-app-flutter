@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_analog_clock/flutter_analog_clock.dart';
+import '../services/auth_service.dart';
+import '../services/user_service.dart';
 import 'all_tasks_screen.dart';
 import 'profile_screen.dart';
 
@@ -12,43 +14,53 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  String? userName;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const AllTasksScreen(),
-    const ProfileScreen(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName();
+  }
 
-  void _onItemTapped(int index) {
+  Future<void> _fetchUserName() async {
+    Map<String, dynamic>? userDetails = await UserService.getUserDetails();
+
+    debugPrint("🔍 User details in _fetchUserName(): $userDetails");
+
     setState(() {
-      _selectedIndex = index;
+      userName = userDetails?['name'] ?? 'User';
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      HomePage(userName: userName),
+      const AllTasksScreen(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
-      // Remove the logout action from the AppBar
-      // appBar: AppBar(
-      //   title: const Text('Tasks App'),
-      // ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        // type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: "All Tasks"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
     );
   }
 }
 
 class HomePage extends StatefulWidget {
-  final String? userName;
+  final String? userName; // Get userName from HomeScreen
 
   const HomePage({super.key, this.userName});
 
@@ -59,8 +71,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _dateController =
-      TextEditingController(); // Controller for Due Date
+  final TextEditingController _dateController = TextEditingController();
 
   DateTime? _selectedDate;
 
@@ -92,7 +103,7 @@ class HomePageState extends State<HomePage> {
           children: [
             const SizedBox(height: 20),
             Text(
-              "Hey 👋 ${widget.userName ?? '...'}",
+              "Hey 👋 ${widget.userName ?? '...'}", // Show the user's name
               style: const TextStyle(
                 color: Color(0xFF252C34),
                 fontSize: 20,
@@ -155,14 +166,14 @@ class HomePageState extends State<HomePage> {
                   TextField(
                     controller: _descriptionController,
                     decoration: const InputDecoration(labelText: "Description"),
-                    maxLines: 3, // Allows multiline text
+                    maxLines: 3,
                   ),
                   const SizedBox(height: 10),
 
                   // 📅 Due Date Picker (Tappable Field)
                   TextField(
                     controller: _dateController,
-                    readOnly: true, // Prevents manual input
+                    readOnly: true,
                     decoration: const InputDecoration(
                       labelText: "Due Date",
                       hintText: "Select a date",
