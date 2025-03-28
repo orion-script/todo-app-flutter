@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_analog_clock/flutter_analog_clock.dart';
-import '../services/auth_service.dart';
+// import '../services/auth_service.dart';
 import '../services/user_service.dart';
+import '../services/todo_service.dart';
 import 'all_tasks_screen.dart';
 import 'profile_screen.dart';
 
@@ -28,20 +29,30 @@ class HomeScreenState extends State<HomeScreen> {
     debugPrint("🔍 User details in _fetchUserName(): $userDetails");
 
     setState(() {
-      userName = userDetails?['name'] ?? 'User';
+      userName = userDetails?['name']?.split(' ').last ?? 'User';
     });
   }
 
+  // Future<void> _createTodo() async {
+  //   Map<String, dynamic>? userDetails = await UserService.getUserDetails();
+
+  //   debugPrint("🔍 User details in _fetchUserName(): $userDetails");
+
+  //   setState(() {
+  //     userName = userDetails?['name']?.split(' ').last ?? 'User';
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = [
+    final List<Widget> pages = [
       HomePage(userName: userName),
       const AllTasksScreen(),
       const ProfileScreen(),
     ];
 
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
@@ -60,7 +71,7 @@ class HomeScreenState extends State<HomeScreen> {
 }
 
 class HomePage extends StatefulWidget {
-  final String? userName; // Get userName from HomeScreen
+  final String? userName;
 
   const HomePage({super.key, this.userName});
 
@@ -74,6 +85,43 @@ class HomePageState extends State<HomePage> {
   final TextEditingController _dateController = TextEditingController();
 
   DateTime? _selectedDate;
+
+  bool _isLoading = false;
+
+  Future<void> _addTodo() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String? errorMessage = await TodoService.addTodo(
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      dueDate: _dateController.text.trim(),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (errorMessage == null) {
+      if (!mounted) return;
+      // Success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Todo created successfully")),
+      );
+
+      // Clear input fields
+      _titleController.clear();
+      _descriptionController.clear();
+      _dateController.clear();
+    } else {
+      if (!mounted) return;
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  }
 
   // 📅 Function to open the date picker
   Future<void> _pickDueDate(BuildContext context) async {
@@ -103,7 +151,7 @@ class HomePageState extends State<HomePage> {
           children: [
             const SizedBox(height: 20),
             Text(
-              "Hey 👋 ${widget.userName ?? '...'}", // Show the user's name
+              "Hey 👋 ${widget.userName ?? '...'}",
               style: const TextStyle(
                 color: Color(0xFF252C34),
                 fontSize: 20,
@@ -184,18 +232,18 @@ class HomePageState extends State<HomePage> {
 
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () {
-                      // Add task action
-                    },
+                    onPressed: _isLoading ? null : _addTodo,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF458AE5),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 80, vertical: 14),
                     ),
-                    child: const Text(
-                      "Add Task",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            "Add Task",
+                            style: TextStyle(color: Colors.white),
+                          ),
                   ),
                 ],
               ),
