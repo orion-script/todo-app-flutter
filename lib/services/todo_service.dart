@@ -6,8 +6,6 @@ import 'auth_service.dart';
 
 class TodoService {
   static const String baseUrl = "https://todo-api-three-snowy.vercel.app";
-  // static const String baseUrl =
-  //     "https://todo-33hzc3d83-orionscripts-projects.vercel.app";
 
   static Future<List<Map<String, dynamic>>?> getTodos() async {
     try {
@@ -66,7 +64,7 @@ class TodoService {
       String? token = prefs.getString('access_token');
 
       if (token == null) {
-        print("❌ No token found.");
+        // print("❌ No token found.");
         return "User not authenticated";
       }
 
@@ -74,7 +72,7 @@ class TodoService {
       DateTime parsedDate = DateFormat("dd/MM/yyyy").parse(dueDate);
       String formattedDate = DateFormat("yyyy-MM-dd").format(parsedDate);
 
-      print("🔑 Using Token: $token");
+      // print("🔑 Using Token: $token");
 
       final newTodo = {
         "title": title,
@@ -91,31 +89,31 @@ class TodoService {
         },
         body: jsonEncode(newTodo),
       );
-      print("newTodo: $newTodo");
-      print("Response Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
+      // print("newTodo: $newTodo");
+      // print("Response Status Code: ${response.statusCode}");
+      // print("Response Body: ${response.body}");
 
       if (response.statusCode == 201) {
         return null;
       } else if (response.statusCode == 401) {
-        print("🔄 Token expired, refreshing...");
+        // print("🔄 Token expired, refreshing...");
         bool refreshed = await AuthService.refreshAccessToken();
         if (refreshed) {
-          print("✅ Retrying with new token...");
+          // print("✅ Retrying with new token...");
           return await addTodo(
               title: title, description: description, dueDate: dueDate);
         }
       }
 
-      print("❌ Error adding Todo: ${response.body}");
+      // print("❌ Error adding Todo: ${response.body}");
       return "Failed to add Todo";
     } catch (error) {
-      print("❌ Exception: $error");
+      // print("❌ Exception: $error");
       return "An error occurred: $error";
     }
   }
 
-// ✅ Mark Todo as Completed
+  // ✅ Mark Todo as Completed
   static Future<bool> markTodoCompleted(String id) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -130,21 +128,21 @@ class TodoService {
         },
       );
 
-      print("🔹 Response Status Code: ${response.statusCode}");
-      print("🔹 Response Body: ${response.body}");
+      // print("🔹 Response Status Code: ${response.statusCode}");
+      // print("🔹 Response Body: ${response.body}");
 
       if (response.statusCode == 200) return true;
 
       if (response.statusCode == 401) {
-        print("🔄 Token expired. Trying to refresh...");
+        // print("🔄 Token expired. Trying to refresh...");
         bool refreshed = await AuthService.refreshAccessToken();
         return refreshed ? await markTodoCompleted(id) : false;
       }
 
-      print("❌ Error: Failed to mark todo as completed.");
+      // print("❌ Error: Failed to mark todo as completed.");
       return false;
     } catch (error) {
-      print("❌ Exception: $error");
+      // print("❌ Exception: $error");
       return false;
     }
   }
@@ -164,19 +162,19 @@ class TodoService {
         },
       );
 
-      print("🔹 Response Status Code: ${response.statusCode}");
-      print("🔹 Response Body: ${response.body}");
+      // print("🔹 Response Status Code: ${response.statusCode}");
+      // print("🔹 Response Body: ${response.body}");
 
       if (response.statusCode == 200) return true;
       if (response.statusCode == 401) {
-        print("🔄 Token expired. Trying to refresh...");
+        // print("🔄 Token expired. Trying to refresh...");
         bool refreshed = await AuthService.refreshAccessToken();
         return refreshed ? await deleteTodo(id) : false;
       }
-      print("❌ Error: Failed to mark todo as completed.");
+      // print("❌ Error: Failed to mark todo as completed.");
       return false;
     } catch (error) {
-      print("❌ Exception: $error");
+      // print("❌ Exception: $error");
       return false;
     }
   }
